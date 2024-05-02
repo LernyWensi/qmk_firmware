@@ -1,0 +1,16 @@
+BOARD = atmega32u4
+BOOTLOADER = caterina
+PIN_COMPATIBLE = promicro
+
+LTO_ENABLE = yes
+SPLIT_KEYBOARD = yes
+
+NKRO_ENABLE = yes
+BOOTMAGIC_ENABLE = yes
+
+EXTRAKEY_ENABLE = yes
+MOUSEKEY_ENABLE = yes
+TAP_DANCE_ENABLE = yes
+CAPS_WORD_ENABLE = yes
+
+SRC += features/achordion.c
