@@ -1,7 +1,4 @@
-#include "keycodes.h"
 #include QMK_KEYBOARD_H
-
-#include "features/achordion.h"
 
 enum {
     BASE,
@@ -23,9 +20,9 @@ enum {
 #define TAB_MOUSE LT(MOUSE, KC_TAB)
 #define ESC_MEDIA LT(MEDIA, KC_ESC)
 
-#define GUI_N GUI_T(KC_N)  
-#define ALT_R ALT_T(KC_R)  
-#define CTRL_T CTL_T(KC_T)  
+#define GUI_N GUI_T(KC_N)
+#define ALT_R ALT_T(KC_R)
+#define CTRL_T CTL_T(KC_T)
 #define SFT_S SFT_T(KC_S)
 
 #define ENT_SYM LT(SYM, KC_ENT)
@@ -161,65 +158,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     ),
 };
 
-bool process_record_user(uint16_t keycode, keyrecord_t* record) {
-    if (!process_achordion(keycode, record)) {
-        return false;
-    }
-
-    return true;
-}
-
-void matrix_scan_user(void) {
-    achordion_task();
-}
-
-uint16_t achordion_timeout(uint16_t tap_hold_keycode) {
-    switch (tap_hold_keycode) {
-        case SPC_NAV:
-        case TAB_MOUSE:
-        case ENT_SYM:
-        case BSPC_NUM:
-            return 0;
-    }
-
-    return 800;
-}
-
-bool achordion_chord(uint16_t tap_hold_keycode, keyrecord_t* tap_hold_record, uint16_t other_keycode, keyrecord_t* other_record) {
-    if (
-        other_record->event.key.row % (MATRIX_ROWS / 2) == 3 ||
-        tap_hold_record->event.key.row % (MATRIX_ROWS / 2) == 3
-    ) {
-        return true;
-    }
-
-    return achordion_opposite_hands(tap_hold_record, other_record);
-}
-
-uint16_t achordion_streak_chord_timeout(uint16_t tap_hold_keycode, uint16_t next_keycode) {
-    if (IS_QK_LAYER_TAP(tap_hold_keycode)) {
-        return 0;
-    }
-
-    uint8_t mod = mod_config(QK_MOD_TAP_GET_MODS(tap_hold_keycode));
-    if ((mod & MOD_LSFT) != 0 || (mod & MOD_LCTL) != 0 || (mod & MOD_LALT) != 0) {
-        return 100;
-    } else {
-        return 250;
-    }
-}
-
-bool achordion_eager_mod(uint8_t mod) {
-    switch (mod) {
-        case MOD_LALT:
-        case MOD_LCTL:
-        case MOD_LSFT:
-            return true;
-        default:
-            return false;
-    }
-}
-
 const uint16_t PROGMEM co_base_left[]  = {SPC_NAV, TAB_MOUSE, COMBO_END};
 const uint16_t PROGMEM co_base_right[] = {ENT_SYM, BSPC_NUM, COMBO_END};
 
@@ -249,3 +187,14 @@ combo_t key_combos[] = {
     COMBO(co_game_alt, KC_LALT),
     COMBO(co_game_fun, MO(GAME_FUN)),
 };
+
+bool is_flow_tap_key(uint16_t keycode) {
+    switch (get_tap_keycode(keycode)) {
+        case KC_A ... KC_Z:
+        case KC_QUOT:
+        case KC_DOT:
+        case KC_COMM:
+            return true;
+    }
+    return false;
+}
