@@ -1,5 +1,5 @@
-#define TAPPING_TERM 250
-#define FLOW_TAP_TERM 150
+#define TAPPING_TERM 170
+#define FLOW_TAP_TERM 85
 #define QUICK_TAP_TERM 0
 #define CHORDAL_HOLD
 #define PERMISSIVE_HOLD

@@ -2,6 +2,8 @@
 
 enum {
     BASE,
+    QWERTY,
+    GRAPHITE,
 
     NAV,
     MOUSE,
@@ -25,14 +27,24 @@ enum {
 #define CTRL_T CTL_T(KC_T)
 #define SFT_S SFT_T(KC_S)
 
+#define GUI_A LT(GRAPHITE, KC_A)
+#define ALT_S LT(GRAPHITE, KC_S)
+#define CTRL_D LT(GRAPHITE, KC_D)
+#define SFT_F SFT_T(KC_F)
+
 #define ENT_SYM LT(SYM, KC_ENT)
 #define BSPC_NUM LT(NUM, KC_BSPC)
 #define DEL_FUN LT(FUN, KC_DEL)
 
 #define SFT_H SFT_T(KC_H)
-#define CTL_A CTL_T(KC_A)
+#define CTRL_A CTL_T(KC_A)
 #define ALT_E ALT_T(KC_E)
 #define GUI_I GUI_T(KC_I)
+
+#define SFT_J SFT_T(KC_J)
+#define CTRL_K LT(GRAPHITE, KC_K)
+#define ALT_L LT(GRAPHITE, KC_L)
+#define GUI_QUOT LT(GRAPHITE, KC_QUOT)
 
 #define ESC_GAME_NUM LT(GAME_NUM, KC_ESC)
 
@@ -41,7 +53,31 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 //      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
                   KC_B,         KC_L,         KC_D,         KC_W,         KC_Z,                                     KC_QUOT,         KC_F,         KC_O,         KC_U,         KC_J,
 //      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
-                 GUI_N,        ALT_R,       CTRL_T,        SFT_S,         KC_G,                                        KC_Y,        SFT_H,        CTL_A,        ALT_E,        GUI_I,
+                 GUI_N,        ALT_R,       CTRL_T,        SFT_S,         KC_G,                                        KC_Y,        SFT_H,       CTRL_A,        ALT_E,        GUI_I,
+//      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
+                  KC_Q,         KC_X,         KC_M,         KC_C,         KC_V,                                        KC_K,         KC_P,      KC_SLSH,      KC_COMM,       KC_DOT,
+//      |-------------+-------------+-------------+-------------+-------------+-------------|  |-------------+-------------+-------------+-------------+-------------+-------------|
+                                                                       SPC_NAV,    TAB_MOUSE,         ENT_SYM,     BSPC_NUM
+//                                                              |-------------+-------------|  |-------------+-------------|
+    ),
+
+    [QWERTY] = LAYOUT(
+//      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
+                  KC_Q,         KC_W,         KC_E,         KC_R,         KC_T,                                        KC_Y,         KC_U,         KC_I,         KC_O,         KC_P,
+//      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
+                 GUI_A,        ALT_S,       CTRL_D,        SFT_F,         KC_G,                                        KC_H,        SFT_J,       CTRL_K,        ALT_L,     GUI_QUOT,
+//      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
+                  KC_Z,         KC_X,         KC_C,         KC_V,         KC_B,                                        KC_N,         KC_M,      KC_COMM,       KC_DOT,      KC_SLSH,
+//      |-------------+-------------+-------------+-------------+-------------+-------------|  |-------------+-------------+-------------+-------------+-------------+-------------|
+                                                                       SPC_NAV,    TAB_MOUSE,         ENT_SYM,     BSPC_NUM
+//                                                              |-------------+-------------|  |-------------+-------------|
+    ),
+
+    [GRAPHITE] = LAYOUT(
+//      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
+                  KC_B,         KC_L,         KC_D,         KC_W,         KC_Z,                                     KC_QUOT,         KC_F,         KC_O,         KC_U,         KC_J,
+//      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
+                  KC_N,         KC_R,         KC_T,         KC_S,         KC_G,                                        KC_Y,         KC_H,         KC_A,         KC_E,         KC_I,
 //      |-------------+-------------+-------------+-------------+-------------|                              |-------------+-------------+-------------+-------------+-------------|
                   KC_Q,         KC_X,         KC_M,         KC_C,         KC_V,                                        KC_K,         KC_P,      KC_SLSH,      KC_COMM,       KC_DOT,
 //      |-------------+-------------+-------------+-------------+-------------+-------------|  |-------------+-------------+-------------+-------------+-------------+-------------|
@@ -197,4 +233,43 @@ bool is_flow_tap_key(uint16_t keycode) {
             return true;
     }
     return false;
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case KC_LALT:
+            if (record->event.pressed) layer_invert(QWERTY);
+            break;
+        case CTRL_D:
+        case CTRL_K:
+            if (record->tap.count == 0) {
+                if (record->event.pressed) {
+                    register_mods(MOD_BIT(KC_LCTL));
+                } else {
+                    unregister_mods(MOD_BIT(KC_LCTL));
+                }
+            }
+            break;
+        case ALT_S:
+        case ALT_L:
+            if (record->tap.count == 0) {
+                if (record->event.pressed) {
+                    register_mods(MOD_BIT(KC_LALT));
+                } else {
+                    unregister_mods(MOD_BIT(KC_LALT));
+                }
+            }
+            break;
+        case GUI_A:
+        case GUI_QUOT:
+            if (record->tap.count == 0) {
+                if (record->event.pressed) {
+                    register_mods(MOD_BIT(KC_LGUI));
+                } else {
+                    unregister_mods(MOD_BIT(KC_LGUI));
+                }
+            }
+            break;
+    }
+    return true;
 }
