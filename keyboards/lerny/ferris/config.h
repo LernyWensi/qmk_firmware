@@ -4,7 +4,7 @@
 #define CHORDAL_HOLD
 #define PERMISSIVE_HOLD
 
-#define COMBO_TERM 200
+#define COMBO_TERM 50
 #define EXTRA_SHORT_COMBOS
 
 #define CAPS_WORD_IDLE_TIMEOUT 0
